@@ -11,3 +11,6 @@ Create a map of Switzerland and plot the COVID19 data on the map.
 
 ## Software used to build the svg images
 https://github.com/interactivethings/swiss-maps
+
+## License
+[GPLv3.0](https://github.com/zdavatz/covid2019_ch_map/blob/master/LICENSE)
