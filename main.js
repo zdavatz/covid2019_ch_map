@@ -14,11 +14,6 @@ const _ = require('lodash');
 const request = require('request');
 const Twitter = require('twitter');
 
-//Loads the handlebars module
-const handlebars = require('express-handlebars');
-//Sets our app to use the handlebars engine
-app.set('view engine', 'handlebars');
-
 
 /** App Configs */
 App = {}
@@ -52,24 +47,11 @@ var client = new Twitter({
 
 /** Express */
 app.use(express.static('.'))
-// app.get('/', function (req, res) {
-//   res.sendFile(path.join(__dirname + '/index.html'));
-// });
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname + '/index.html'));
+});
 
-// app.get('/', (req, res) => {
-//   fs.readFile(__dirname + '/index.html', (err, html) => {
-//     res.send(ejs.render(html, JSON.stringify(App)))
-//   })
-// })
-//Sets handlebars configurations (we will go through them later on)
-app.engine('handlebars', handlebars({
-  layoutsDir: __dirname + '/',
-  }));
 
-app.get('/', (req, res) => {
-  //Serves the body of the page aka "main.handlebars" to the container //aka "index.handlebars"
-  res.render('main', {layout : 'index', data:APP});
-  });
 
 
 app.listen(App.PORT);
