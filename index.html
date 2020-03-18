@@ -81,7 +81,7 @@
                 .attr("transform", function (d) {
                     return "translate(" + path.centroid(d) + ")";
                 })
-                // .attr("dy", ".45em")
+                .attr("dy", ".45em")
                 .html(function (d) {
                     if (d.properties.cases) {
                         return d.id + " <br/> " + d.properties.cases;

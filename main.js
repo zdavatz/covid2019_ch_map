@@ -14,6 +14,9 @@ const request = require('request');
 const Twitter = require('twitter');
 /** App Configs */
 App = {}
+/**  */
+App.isProduction = false;
+/** */
 App.PORT = 3033;
 App.URL = 'http://localhost:' + App.PORT;
 App.post = "";
@@ -21,7 +24,7 @@ App.DataSrcURL = "https://raw.githubusercontent.com/daenuprobst/covid19-cases-sw
 App.DataSrcJSON = null;
 App.ExportedImage = require('fs').readFileSync('swiss.png');
 App.day = "";
-App.isProduction = true;
+
 var jsonData;
 require('dotenv').config();
 // console.log(process.env)
@@ -52,6 +55,12 @@ app.get('/', function (req, res) {
 app.listen(App.PORT);
 /** Reading the Remote Data */
 console.log("Example app listening at", App.URL)
+/** */
+if(App.isProduction){
+  console.log('Production Mode')
+}else{
+  console.log('Development Mode')
+}
 /** Reading Source file*/
 requestData()
 /** */

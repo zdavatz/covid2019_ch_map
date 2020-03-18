@@ -12,7 +12,7 @@ Create a map of Switzerland and plot the COVID19 data on the map.
 
 
 ## Configuration
-1. Create ".env" file with Twitter App credentials, you can get it from here: [](https://developer.twitter.com)
+-  Create ".env" file with Twitter App credentials, you can get it from here: [](https://developer.twitter.com)
 
 ```
 TWITTER_CONSUMER_KEY=
@@ -22,6 +22,15 @@ TWITTER_CONSUMER_TOKEN_SECRET=
 
 ```
 
+## Running Modes
+
+Switch between Development and Production mode with simple switch in "main.js"
+
+
+```
+    App.isProduction = true;
+
+```
 
 ## Run
 
