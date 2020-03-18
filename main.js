@@ -78,9 +78,6 @@ console.log("Example app listening at", App.URL)
 /** Reading Source file*/
 requestData()
 
-
-
-
 /** */
 function requestData() {
   request.get(App.DataSrcURL, function (error, response, body) {
