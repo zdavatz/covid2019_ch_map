@@ -7,14 +7,11 @@
 const fs = require('fs')
 const puppeteer = require('puppeteer')
 const express = require('express');
-
 const app = express();
 const path = require('path');
 const _ = require('lodash');
 const request = require('request');
 const Twitter = require('twitter');
-
-
 /** App Configs */
 App = {}
 App.PORT = 3033;
@@ -25,41 +22,37 @@ App.DataSrcJSON = null;
 App.ExportedImage = require('fs').readFileSync('swiss.png');
 App.day = "";
 var jsonData;
-
 require('dotenv').config();
-
 // console.log(process.env)
 /** */
 
+if(!process.env.TWITTER_CONSUMER_KEY || !process.env.TWITTER_CONSUMER_SECRET || !process.env.TWITTER_CONSUMER_TOKEN_KEY || !process.env.TWITTER_CONSUMER_TOKEN_KEY){
+  console.log("ERROR: Twitter keys and okens are not set")
+  return
+}else{
+  console.log("Key: ",process.env.TWITTER_CONSUMER_KEY)
+  console.log("KeySecret",process.env.TWITTER_CONSUMER_SECRET)
+  console.log("Token",process.env.TWITTER_CONSUMER_TOKEN_KEY)
+  console.log("TokenSecret",process.env.TWITTER_CONSUMER_TOKEN_KEY)
+
+}
+/** */
 var client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
   consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
   access_token_key: process.env.TWITTER_CONSUMER_TOKEN_KEY,
-  access_token_secret: process.env.TWITTER_CONSUMER_TOKEN_SECRET
+  access_token_secret: process.env.TWITTER_CONSUMER_TOKEN_KEY
 });
-
-
-
-
-
-
-
-
 /** Express */
 app.use(express.static('.'))
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname + '/index.html'));
 });
-
-
-
-
 app.listen(App.PORT);
 /** Reading the Remote Data */
 console.log("Example app listening at", App.URL)
 /** Reading Source file*/
 requestData()
-
 /** */
 function requestData() {
   request.get(App.DataSrcURL, function (error, response, body) {
@@ -71,18 +64,15 @@ function requestData() {
       if (latest) {
         updateData(latest)
         generatePng()
-        createTweet(App.ExportedImage)
-        
+        // createTweet(App.ExportedImage)
       } else {
         console.log('Error', 'The latest data is missing')
       }
-
     } else {
       console.log('Error: Remote file does not exist')
     }
   });
 }
-
 /** Update the Data file */
 function updateData(latest) {
   var buffer = fs.readFileSync("map.source.json");
@@ -91,17 +81,14 @@ function updateData(latest) {
   var cantons = data.objects.cantons.geometries
   data.day = latest.day
   data.total = latest.CH
-
   var cantonsUpdate = _.map(cantons, (element) => {
     var cases = latest[element.id] || 0;
     // console.log(latest)
     return _.extend({}, element, {
-
       properties: {
         id: element.id,
         name: element.properties.name,
         cases: cases,
- 
       }
     });
   })
@@ -115,9 +102,7 @@ function updateData(latest) {
       console.log("Writing Mew Data Success")
     }
   });
-
 }
-
 /** Generate PNG Image */
 function generatePng() {
   (async () => {
