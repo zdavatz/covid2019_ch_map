@@ -141,7 +141,7 @@ function createTweet(image) {
       console.log(media);
       console.log("Success: Image file uploaded");
       var status = {
-        status: 'Look at your CT Scan images with Miele-LXIV, free and OpenSource https://apps.apple.com/de/app/miele-lxiv/id988332475?mt=12 #Covid19 #DICOM',
+        status: 'Look at your CT Scan images with Miele-LXIV, free and OpenSource https://apps.apple.com/de/app/miele-lxiv/id988332475?mt=12 #Covid19 #DICOM Switzerland still transmits test results via Fax ;( so lots of data is missing. Map generated with https://github.com/zdavatz/covid2019_ch_map - data from here https://github.com/daenuprobst/covid19-cases-switzerland/blob/master/covid19_cases_switzerland.csv',
         media_ids: media.media_id_string
       }
       client.post('statuses/update', status, function (error, post, response) {
