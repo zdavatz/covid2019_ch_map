@@ -7,13 +7,11 @@
     .canton {
         fill: #bbb;
     }
-
     .canton-boundary {
         fill: none;
         stroke: #fff;
         stroke-linejoin: round;
     }
-
     text {
         font-size: 16px;
         paint-order: stroke;
@@ -30,21 +28,15 @@
         margin: 10px;
     }
 </style>
-
 <body>
-    
     <script src="//d3js.org/d3.v3.min.js"></script>
     <script src="//d3js.org/topojson.v1.min.js"></script>
-
-
     <div id="map"></div>
     <div class="" style="text-align: center;width: 50%;width: 960px;height: 80px; padding: 10px;">
       <span class="meta"><strong>Date:</strong> <span id="date"></span></span><br>
         <span class="meta"><strong>Total Cases:</strong> <span id="total"></span></span><br>
         <span class="meta"><strong>Look at your Covid19 CT Scan images with Miele-LXIV<br>free and OpenSource<br>https://apps.apple.com/de/app/miele-lxiv/id988332475?mt=12</strong> <span id="total"></span></span><br><br>https://github.com/zdavatz/covid2019_ch_map
     </div>
-
-
     <script>
         var width = 960,
             height = 600;
@@ -61,13 +53,8 @@
             .attr("height", height);
         d3.json("swiss.json", function (error, swiss) {
             if (error) throw error;
-
-   
-
-
             d3.select("#date").text(swiss.day)
             d3.select("#total").text(swiss.total)
-
             var cantons = topojson.feature(swiss, swiss.objects.cantons);
             svg.selectAll("path")
                 .data(cantons.features)
@@ -87,22 +74,20 @@
                 }))
                 .attr("class", "canton-boundary")
                 .attr("d", path);
+                // 
             svg.selectAll("text")
                 .data(cantons.features)
                 .enter().append("text")
                 .attr("transform", function (d) {
                     return "translate(" + path.centroid(d) + ")";
                 })
-                .attr("dy", ".45em")
-                .text(function (d) {
+                // .attr("dy", ".45em")
+                .html(function (d) {
                     if (d.properties.cases) {
-                        return d.properties.cases;
-
+                        return d.id + " <br/> " + d.properties.cases;
                     } else {
-                        // return d.id;
+                        return d.id;
                     }
                 });
-
-
         });
     </script>

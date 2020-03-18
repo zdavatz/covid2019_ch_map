@@ -21,6 +21,7 @@ App.DataSrcURL = "https://raw.githubusercontent.com/daenuprobst/covid19-cases-sw
 App.DataSrcJSON = null;
 App.ExportedImage = require('fs').readFileSync('swiss.png');
 App.day = "";
+App.isProduction = true;
 var jsonData;
 require('dotenv').config();
 // console.log(process.env)
@@ -65,7 +66,10 @@ function requestData() {
       if (latest) {
         updateData(latest)
         generatePng()
-        createTweet(App.ExportedImage)
+        if(App.isProduction){
+          createTweet(App.ExportedImage)
+        }
+        
       } else {
         console.log('Error', 'The latest data is missing')
       }
