@@ -27,13 +27,13 @@ require('dotenv').config();
 /** */
 
 if(!process.env.TWITTER_CONSUMER_KEY || !process.env.TWITTER_CONSUMER_SECRET || !process.env.TWITTER_CONSUMER_TOKEN_KEY || !process.env.TWITTER_CONSUMER_TOKEN_KEY){
-  console.log("ERROR: Twitter keys and okens are not set")
+  console.log("ERROR: Twitter keys and tokens are not set")
   return
 }else{
   console.log("Key: ",process.env.TWITTER_CONSUMER_KEY)
-  console.log("KeySecret",process.env.TWITTER_CONSUMER_SECRET)
-  console.log("Token",process.env.TWITTER_CONSUMER_TOKEN_KEY)
-  console.log("TokenSecret",process.env.TWITTER_CONSUMER_TOKEN_KEY)
+  console.log("KeySecret: ",process.env.TWITTER_CONSUMER_SECRET)
+  console.log("Token: ",process.env.TWITTER_CONSUMER_TOKEN_KEY)
+  console.log("TokenSecret: ",process.env.TWITTER_CONSUMER_TOKEN_KEY)
 
 }
 /** */
@@ -58,13 +58,14 @@ function requestData() {
   request.get(App.DataSrcURL, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       var json = csvToJson(body);
-      var latest = json[11];
+      console.log(json[json.length - 2])
+      var latest = json[json.length - 2];
       latest.day = latest[Object.keys(latest)[0]]
       console.log('Grapping Data: latest day', latest.day)
       if (latest) {
         updateData(latest)
         generatePng()
-        // createTweet(App.ExportedImage)
+        createTweet(App.ExportedImage)
       } else {
         console.log('Error', 'The latest data is missing')
       }
