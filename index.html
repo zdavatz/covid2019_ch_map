@@ -1,30 +1,49 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
+    body{
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
     .canton {
         fill: #bbb;
     }
+
     .canton-boundary {
         fill: none;
         stroke: #fff;
         stroke-linejoin: round;
     }
-    text {
-    font-size:  16px;
-    paint-order: stroke;
-    stroke: #fff;
-    stroke-width: 3px;
-    stroke-linecap: butt;
-    stroke-linejoin: miter;
-    font-weight: 900;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    text-anchor: middle;
-}
 
+    text {
+        font-size: 16px;
+        paint-order: stroke;
+        stroke: #fff;
+        stroke-width: 3px;
+        stroke-linecap: butt;
+        stroke-linejoin: miter;
+        font-weight: 900;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        text-anchor: middle;
+    }
+    .meta{
+        padding: 10px;
+        margin: 10px;
+    }
 </style>
+
 <body>
+    
     <script src="//d3js.org/d3.v3.min.js"></script>
     <script src="//d3js.org/topojson.v1.min.js"></script>
+
+
+    <div id="map"></div>
+    <div class="" style="text-align: center;width: 50%;width: 960px;height: 100px; padding: 10px;">
+        <span class="meta"><strong>Date:</strong> <span id="date"></span></span>
+        <span class="meta"><strong>Total Cases:</strong> <span id="total"></span></span>
+    </div>
+
+
     <script>
         var width = 960,
             height = 600;
@@ -36,11 +55,18 @@
             .precision(.1);
         var path = d3.geo.path()
             .projection(projection);
-        var svg = d3.select("body").append("svg")
+        var svg = d3.select("#map").append("svg")
             .attr("width", width)
             .attr("height", height);
         d3.json("swiss.json", function (error, swiss) {
             if (error) throw error;
+
+   
+
+
+            d3.select("#date").text(swiss.day)
+            d3.select("#total").text(swiss.total)
+
             var cantons = topojson.feature(swiss, swiss.objects.cantons);
             svg.selectAll("path")
                 .data(cantons.features)
@@ -48,8 +74,8 @@
                 .attr("d", path)
                 .style("fill", function (d) {
                     if (d.properties.cases) {
-                        return "red"; //on condition match
-                    }else{
+                        return "red";
+                    } else {
                         return "#ddd"
                     }
                 })
@@ -70,9 +96,12 @@
                 .text(function (d) {
                     if (d.properties.cases) {
                         return d.properties.cases;
+
                     } else {
                         // return d.id;
                     }
-                });           
+                });
+
+
         });
     </script>

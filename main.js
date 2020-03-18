@@ -7,11 +7,19 @@
 const fs = require('fs')
 const puppeteer = require('puppeteer')
 const express = require('express');
+
 const app = express();
 const path = require('path');
 const _ = require('lodash');
 const request = require('request');
 const Twitter = require('twitter');
+
+//Loads the handlebars module
+const handlebars = require('express-handlebars');
+//Sets our app to use the handlebars engine
+app.set('view engine', 'handlebars');
+
+
 /** App Configs */
 App = {}
 App.PORT = 3033;
@@ -20,6 +28,7 @@ App.post = "";
 App.DataSrcURL = "https://raw.githubusercontent.com/daenuprobst/covid19-cases-switzerland/master/covid19_cases_switzerland.csv"
 App.DataSrcJSON = null;
 App.ExportedImage = require('fs').readFileSync('swiss.png');
+App.day = "";
 var jsonData;
 
 require('dotenv').config();
@@ -43,9 +52,26 @@ var client = new Twitter({
 
 /** Express */
 app.use(express.static('.'))
-app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname + '/index.html'));
-});
+// app.get('/', function (req, res) {
+//   res.sendFile(path.join(__dirname + '/index.html'));
+// });
+
+// app.get('/', (req, res) => {
+//   fs.readFile(__dirname + '/index.html', (err, html) => {
+//     res.send(ejs.render(html, JSON.stringify(App)))
+//   })
+// })
+//Sets handlebars configurations (we will go through them later on)
+app.engine('handlebars', handlebars({
+  layoutsDir: __dirname + '/',
+  }));
+
+app.get('/', (req, res) => {
+  //Serves the body of the page aka "main.handlebars" to the container //aka "index.handlebars"
+  res.render('main', {layout : 'index', data:APP});
+  });
+
+
 app.listen(App.PORT);
 /** Reading the Remote Data */
 console.log("Example app listening at", App.URL)
@@ -61,6 +87,8 @@ function requestData() {
     if (!error && response.statusCode == 200) {
       var json = csvToJson(body);
       var latest = json[11];
+      latest.day = latest[Object.keys(latest)[0]]
+      console.log('Grapping Data: latest day', latest.day)
       if (latest) {
         updateData(latest)
         generatePng()
@@ -82,13 +110,19 @@ function updateData(latest) {
   var data = JSON.parse(buffer)
   console.log('Reading Cantons: ', data.objects.cantons.geometries.length)
   var cantons = data.objects.cantons.geometries
+  data.day = latest.day
+  data.total = latest.CH
+
   var cantonsUpdate = _.map(cantons, (element) => {
     var cases = latest[element.id] || 0;
+    // console.log(latest)
     return _.extend({}, element, {
+
       properties: {
         id: element.id,
         name: element.properties.name,
-        cases: cases
+        cases: cases,
+ 
       }
     });
   })
