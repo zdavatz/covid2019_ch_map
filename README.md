@@ -23,6 +23,14 @@ TWITTER_CONSUMER_TOKEN_SECRET=
 ```
 
 
+## Run
+
+```
+$ npm i
+$ node main.js
+```
+
+
 ## Software used to build the svg images
 https://github.com/interactivethings/swiss-maps
 
