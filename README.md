@@ -8,6 +8,7 @@ Create a map of Switzerland and plot the COVID19 data on the map.
 4. Use Twitter API to post the generated PNG on your timeline.
 5. Configure Twitter API so you can add some static text/hashtag to every tweet.
 6. Tweet is being posted if there is new data from [daenuprobst](https://github.com/daenuprobst/).
+7. Use [t](https://github.com/sferik/t) to create credentials.
 
 
 ## Configuration
