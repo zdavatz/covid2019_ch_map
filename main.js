@@ -155,7 +155,7 @@ function createTweet(image) {
       console.log(media);
       console.log("Success: Image file uploaded");
       var status = {
-        status: 'Look at your CT Scan images with Miele-LXIV, free and OpenSource https://apps.apple.com/de/app/miele-lxiv/id988332475?mt=12 #Covid19 #DICOM #Oubreak',
+        status: 'Look at your CT Scan images with Miele-LXIV, free and OpenSource https://apps.apple.com/de/app/miele-lxiv/id988332475?mt=12 #Covid19 #DICOM',
         media_ids: media.media_id_string
       }
       client.post('statuses/update', status, function (error, post, response) {
