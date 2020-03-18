@@ -9,6 +9,19 @@ Create a map of Switzerland and plot the COVID19 data on the map.
 5. Configure Twitter API so you can add some static text/hashtag to every tweet.
 6. Tweet is being posted if there is new data from [daenuprobst](https://github.com/daenuprobst/).
 
+
+## Configuration
+1. Create ".env" file with Twitter App credentials, you can get it from here: [](https://developer.twitter.com)
+
+```
+TWITTER_CONSUMER_KEY=
+TWITTER_CONSUMER_SECRET=
+TWITTER_CONSUMER_TOKEN_KEY=
+TWITTER_CONSUMER_TOKEN_SECRET=
+
+```
+
+
 ## Software used to build the svg images
 https://github.com/interactivethings/swiss-maps
 
