@@ -46,3 +46,10 @@ https://github.com/interactivethings/swiss-maps
 
 ## License
 [GPLv3.0](https://github.com/zdavatz/covid2019_ch_map/blob/master/LICENSE)
+
+
+## Resources
+[Post-Codes](https://github.com/gamba/swiss-geolocation/blob/master/post-codes.csv)
+[CH cities](https://simplemaps.com/data/ch-cities)
+[https://github.com/densitydesign/switzerland-institutional-landscape](https://github.com/densitydesign/switzerland-institutional-landscape)
+[](https://echarts-maps.github.io/echarts-geomapping-book-en/howtos/switzerland/)

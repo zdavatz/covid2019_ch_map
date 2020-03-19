@@ -15,7 +15,7 @@ const Twitter = require('twitter');
 /** App Configs */
 App = {}
 /**  */
-App.isProduction = false;
+App.isProduction = true;
 /** */
 App.PORT = 3033;
 App.URL = 'http://localhost:' + App.PORT;
@@ -63,7 +63,7 @@ if(App.isProduction){
 /** Reading Source file*/
 requestData()
 /** */
-function requestData() {
+async function requestData() {
   request.get(App.DataSrcURL, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       var json = csvToJson(body);
@@ -72,11 +72,12 @@ function requestData() {
       latest.day = latest[Object.keys(latest)[0]]
       console.log('Grapping Data: latest day', latest.day)
       if (latest) {
-        updateData(latest)
-        generatePng()
-        if(App.isProduction){
-          var image = require('fs').readFileSync('swiss.png');
-          createTweet(image)
+         updateData(latest)
+         generatePng()
+        if(App.isProduction){          
+          setTimeout(()=>{
+            createTweet()
+          },1000)         
         }
         
       } else {
@@ -144,7 +145,12 @@ function csvToJson(csv) {
   });
 }
 /**Create Tweet and Publish to Twitter */
-function createTweet(image) {
+function createTweet() {
+  var image = require('fs').readFileSync('swiss.png');
+  console.log(image)
+
+  return
+  
   client.post('media/upload', {
     media: image
   }, function (error, media, response) {
