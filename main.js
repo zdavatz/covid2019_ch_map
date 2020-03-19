@@ -97,7 +97,6 @@ function updateData(latest) {
   data.total = latest.CH
   var cantonsUpdate = _.map(cantons, (element) => {
     var cases = latest[element.id] || 0;
-    // console.log(latest)
     return _.extend({}, element, {
       properties: {
         id: element.id,
@@ -172,6 +171,5 @@ function createTweet(image) {
 /**exit */
 function exit(){
   process.kill(process.pid);
-  // process.exit(22);
 }
 /** */

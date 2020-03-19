@@ -24,7 +24,8 @@ TWITTER_CONSUMER_TOKEN_SECRET=
 
 ## Running Modes
 
-Switch between Development and Production mode with simple switch in "main.js"
+Switch between Development and Production mode with simple switch in "main.js".
+Production mode to publish the tweet to twitter.
 
 
 ```
