@@ -147,10 +147,7 @@ function csvToJson(csv) {
 /**Create Tweet and Publish to Twitter */
 function createTweet() {
   var image = require('fs').readFileSync('swiss.png');
-  console.log(image)
-
-  return
-  
+  console.log("Reading Image",image)
   client.post('media/upload', {
     media: image
   }, function (error, media, response) {
