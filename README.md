@@ -49,7 +49,7 @@ https://github.com/interactivethings/swiss-maps
 
 
 ## Resources
-[Post-Codes](https://github.com/gamba/swiss-geolocation/blob/master/post-codes.csv)
-[CH cities](https://simplemaps.com/data/ch-cities)
-[https://github.com/densitydesign/switzerland-institutional-landscape](https://github.com/densitydesign/switzerland-institutional-landscape)
-[](https://echarts-maps.github.io/echarts-geomapping-book-en/howtos/switzerland/)
+* [Post-Codes](https://github.com/gamba/swiss-geolocation/blob/master/post-codes.csv)
+* [CH cities](https://simplemaps.com/data/ch-cities)
+* [https://github.com/densitydesign/switzerland-institutional-landscape](https://github.com/densitydesign/switzerland-institutional-landscape)
+* [Geomapping Howto for Switzerland](https://echarts-maps.github.io/echarts-geomapping-book-en/howtos/switzerland/)
