@@ -22,12 +22,11 @@ App.URL = 'http://localhost:' + App.PORT;
 App.post = "";
 App.DataSrcURL = "https://raw.githubusercontent.com/daenuprobst/covid19-cases-switzerland/master/covid19_cases_switzerland.csv"
 App.DataSrcJSON = null;
-App.ExportedImage = require('fs').readFileSync('swiss.png');
+
 App.day = "";
 
 var jsonData;
 require('dotenv').config();
-// console.log(process.env)
 /** */
 
 if(!process.env.TWITTER_CONSUMER_KEY || !process.env.TWITTER_CONSUMER_SECRET || !process.env.TWITTER_CONSUMER_TOKEN_KEY || !process.env.TWITTER_CONSUMER_TOKEN_SECRET){
@@ -76,7 +75,8 @@ function requestData() {
         updateData(latest)
         generatePng()
         if(App.isProduction){
-          createTweet(App.ExportedImage)
+          var image = require('fs').readFileSync('swiss.png');
+          createTweet(image)
         }
         
       } else {
