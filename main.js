@@ -12,6 +12,7 @@ const path = require('path');
 const _ = require('lodash');
 const request = require('request');
 const Twitter = require('twitter');
+const Papa = require('papaparse')
 /** App Configs */
 App = {}
 /**  */
@@ -22,13 +23,10 @@ App.URL = 'http://localhost:' + App.PORT;
 App.post = "";
 App.DataSrcURL = "https://raw.githubusercontent.com/daenuprobst/covid19-cases-switzerland/master/covid19_cases_switzerland.csv"
 App.DataSrcJSON = null;
-
 App.day = "";
-
 var jsonData;
 require('dotenv').config();
 /** */
-
 if(!process.env.TWITTER_CONSUMER_KEY || !process.env.TWITTER_CONSUMER_SECRET || !process.env.TWITTER_CONSUMER_TOKEN_KEY || !process.env.TWITTER_CONSUMER_TOKEN_SECRET){
   console.log("ERROR: Twitter keys and tokens are not set")
   return
@@ -37,7 +35,6 @@ if(!process.env.TWITTER_CONSUMER_KEY || !process.env.TWITTER_CONSUMER_SECRET || 
   console.log("KeySecret: ",process.env.TWITTER_CONSUMER_SECRET)
   console.log("Token: ",process.env.TWITTER_CONSUMER_TOKEN_KEY)
   console.log("TokenSecret: ",process.env.TWITTER_CONSUMER_TOKEN_SECRET)
-
 }
 /** */
 var client = new Twitter({
@@ -66,7 +63,18 @@ requestData()
 async function requestData() {
   request.get(App.DataSrcURL, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      var json = csvToJson(body);
+      if(!body){
+        console.log("NO DATA",body);
+        return
+      }
+      var data = Papa.parse(body, {
+        header: true,
+      },)
+      var json = _.filter(data.data, function(o) { 
+        if(o.AG){
+          return o
+        }
+     });
       console.log(json[json.length - 1])
       var latest = json[json.length - 1];
       latest.day = latest[Object.keys(latest)[0]]
@@ -79,7 +87,6 @@ async function requestData() {
             createTweet()
           },1000)         
         }
-        
       } else {
         console.log('Error', 'The latest data is missing')
       }
@@ -140,8 +147,9 @@ function generatePng() {
 function csvToJson(csv) {
   const content = csv.split('\n');
   const header = content[0].split(',');
-  return _.tail(content).map((row) => {
+  var c =  _.tail(content).map((row) => {
     return _.zipObject(header, row.split(','));
+  console.log(c)
   });
 }
 /**Create Tweet and Publish to Twitter */
