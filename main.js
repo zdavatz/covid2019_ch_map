@@ -15,7 +15,7 @@ const Twitter = require('twitter');
 /** App Configs */
 App = {}
 /**  */
-App.isProduction = true;
+App.isProduction = false;
 /** */
 App.PORT = 3033;
 App.URL = 'http://localhost:' + App.PORT;
@@ -67,8 +67,8 @@ async function requestData() {
   request.get(App.DataSrcURL, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       var json = csvToJson(body);
-      console.log(json[json.length - 2])
-      var latest = json[json.length - 2];
+      console.log(json[json.length - 1])
+      var latest = json[json.length - 1];
       latest.day = latest[Object.keys(latest)[0]]
       console.log('Grapping Data: latest day', latest.day)
       if (latest) {
