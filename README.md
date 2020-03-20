@@ -42,4 +42,4 @@ https://github.com/interactivethings/swiss-maps
 * [CH cities](https://simplemaps.com/data/ch-cities)
 * [https://github.com/densitydesign/switzerland-institutional-landscape](https://github.com/densitydesign/switzerland-institutional-landscape)
 * [Geomapping Howto for Switzerland](https://echarts-maps.github.io/echarts-geomapping-book-en/howtos/switzerland/)
-* [KML file of the Swiss Cantons](https://github.com/zdavatz/covid2019_ch_map/files/4358295/kantone_50m.zip)
+* [KML file of the Swiss Cantons](https://github.com/zdavatz/covid2019_ch_map/files/4358295/kantone_50m.zip) thank you https://github.com/davidoesch
