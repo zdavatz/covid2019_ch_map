@@ -18,7 +18,7 @@ const got = require('got');
 /** App Configs */
 App = {}
 /**  */
-App.isProduction = true;
+App.isProduction = false;
 /** */
 App.PORT = 3033;
 App.URL = 'http://localhost:' + App.PORT;
@@ -62,31 +62,26 @@ if (App.isProduction) {
   console.log('Development Mode')
 }
 /** Reading Source file*/
-
 /** */
-
 (async () => {
   try {
     var response = await got(App.DataSrcURL);
-    console.log('swissData',JSON.stringify(response.body));
     var swissData = Papa.parse(response.body,{header:true})
     var recentData = getRecent(swissData)
-    console.log('swissData: Reading Success',recentData);
+    console.log('Cases: Reading Success');
+    console.dir(recentData, {depth: null, colors: true})
     await updateData(recentData)
     var response = await got(App.DataSrcFataURL);
-    // console.log('swissFata: ',JSON.stringify(response.body));
     var swissFata = Papa.parse(response.body,{header:true})    
     var recentFata = getRecent(swissFata)
-    console.log('swissFata: Reading Success',recentFata);
+    console.log('Fatalities: Reading Success');
+    console.dir(recentFata, {depth: null, colors: true})
     await updateData(recentFata, "fata")
     await generatePng()
-    if (App.isProduction) {
-      // setTimeout(() => {
-         createTweet()
-      // }, 1000)
-      console.log('Terminating the script')
-   
-    }   
+  if (App.isProduction) {
+    console.log('Publishing: mode')
+    createTweet()          
+  }
   } catch (error) {
     console.log('Building map Error', error);
   }
@@ -127,12 +122,9 @@ function updateData(latest,type) {
         name: element.properties.name,
       }
     }
-   
     if(type == 'fata'){
-      
       props.properties.fata = latest[element.id] || 0
       props.properties.cases = element.properties.cases;
-     
       console.log('\x1b[36m', props.properties.name ,'\x1b[0m');
       console.log('=')
       console.log(props.properties)
@@ -204,8 +196,8 @@ function createTweet() {
         if (!error) {
           console.log("Success", "The Tweet has been posted to Twitter", post.id_str);
           console.log("Tweet", "https://twitter.com/" + post.user.screen_name + '/status/' + post.id_str)
-          
         }
+        exit()  
       });
     } else {
       console.log("Twitter upload error", error)
@@ -214,7 +206,8 @@ function createTweet() {
 }
 /**exit */
 function exit() {
-  process.kill(process.pid);
+  console.log('Terminating the script')
+  process.exit(-1)
 }
 /** */
 function csvParse(data){
