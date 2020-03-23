@@ -18,7 +18,7 @@ const got = require('got');
 /** App Configs */
 App = {}
 /**  */
-App.isProduction = false;
+App.isProduction = true;
 /** */
 App.PORT = 3033;
 App.URL = 'http://localhost:' + App.PORT;
@@ -81,11 +81,11 @@ if (App.isProduction) {
     await updateData(recentFata, "fata")
     await generatePng()
     if (App.isProduction) {
-      setTimeout(() => {
+      // setTimeout(() => {
          createTweet()
-      }, 1000)
+      // }, 1000)
       console.log('Terminating the script')
-      exit()
+   
     }   
   } catch (error) {
     console.log('Building map Error', error);
@@ -94,11 +94,11 @@ if (App.isProduction) {
 /** Get the most recent updates */
 function getRecent(data){
   var json = _.filter(data.data, function (o) {
-    if (o.AG) {
+    if (o.CH) {
       return o
     }
   });
-  console.log("Getting Recent Data", json[json.length - 1])
+  console.log("Getting Recent Data")
   var latest = json[json.length - 1];
   latest.day = latest[Object.keys(latest)[0]]
   return latest
