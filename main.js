@@ -71,13 +71,13 @@ if (App.isProduction) {
     console.log('swissData',JSON.stringify(response.body));
     var swissData = Papa.parse(response.body,{header:true})
     var recentData = getRecent(swissData)
-    console.log('swissData: Reading Success');
+    console.log('swissData: Reading Success',recentData);
     await updateData(recentData)
     var response = await got(App.DataSrcFataURL);
-    console.log('swissFata: ',JSON.stringify(response.body));
+    // console.log('swissFata: ',JSON.stringify(response.body));
     var swissFata = Papa.parse(response.body,{header:true})    
     var recentFata = getRecent(swissFata)
-    console.log('swissFata: Reading Success');
+    console.log('swissFata: Reading Success',recentFata);
     await updateData(recentFata, "fata")
     await generatePng()
     if (App.isProduction) {
