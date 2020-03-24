@@ -18,7 +18,7 @@ const got = require('got');
 /** App Configs */
 App = {}
 /**  */
-App.isProduction = false;
+App.isProduction = true;
 /** */
 App.PORT = 3033;
 App.URL = 'http://localhost:' + App.PORT;
@@ -189,7 +189,7 @@ function createTweet() {
       console.log(media);
       console.log("Success: Image file uploaded");
       var status = {
-        status: 'Look at your CT Scan images with Miele-LXIV, free and OpenSource https://apps.apple.com/de/app/miele-lxiv/id988332475?mt=12 #Covid19 #DICOM Switzerland still transmits test results via Fax ;( so lots of data is missing. Map generated with https://github.com/zdavatz/covid2019_ch_map - data from here https://github.com/daenuprobst/covid19-cases-switzerland/blob/master/covid19_cases_switzerland.csv',
+        status: 'Look at your CT Scan images with Miele-LXIV, free and OpenSource https://apps.apple.com/de/app/miele-lxiv/id988332475?mt=12 #Covid19 #DICOM https://www.bag.admin.ch/bag/de/home/krankheiten/infektionskrankheiten-bekaempfen/meldesysteme-infektionskrankheiten/meldepflichtige-ik/meldeformulare.html please use this Email covid-19@hin.infreport.ch, Map generated with https://github.com/zdavatz/covid2019_ch_map - data scrapped from Cantons using https://github.com/baryluk/covid_20/',
         media_ids: media.media_id_string
       }
       client.post('statuses/update', status, function (error, post, response) {
