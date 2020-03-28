@@ -73,30 +73,34 @@ if (App.isProduction) {
   console.log('Development Mode')
 }
 /** */
-request(App.DataNew , function(err,  data) {
-	if(err) {
-    console.log('Request Error',  err)
+request(App.DataNew, function (err, data) {
+  if (err) {
+    console.log('Request Error', err)
   };
-  /* data is a node Buffer that can be passed to XLSX.read */
-  console.log(data)
-  // var data = Papa.parse(data.body,{header:true}).data 
-  var data = csvToJson(data.body)
 
-  var data = _.filter(data,(o)=>{
-    if(o.date){
-      return o
-    }
-  })
-  console.log('==========Data===========')
+  if (data && data.body) {
+    /* data is a node Buffer that can be passed to XLSX.read */
+    console.log(data)
+    // var data = Papa.parse(data.body,{header:true}).data 
+    var data = csvToJson(data.body)
+
+    var data = _.filter(data, (o) => {
+      if (o.date) {
+        return o
+      }
+    })
+    console.log('==========Data===========')
 
 
-  console.log(data)
+    console.log(data)
 
-   updateDataNew(data)
-   generatePng()
+    updateDataNew(data)
+    generatePng()
+  }
 
-  
-	/* DO SOMETHING WITH workbook HERE */
+
+
+  /* DO SOMETHING WITH workbook HERE */
 });
 /** Reading Source file*/
 /** */
@@ -105,9 +109,11 @@ request(App.DataNew , function(err,  data) {
     return
     var newData = await got(App.DataNew)
     // console.log(newData.body)
-    var data = Papa.parse(newData.body,{header:true}).data 
-    var data = _.filter(data,(o)=>{
-      if(o.date){
+    var data = Papa.parse(newData.body, {
+      header: true
+    }).data
+    var data = _.filter(data, (o) => {
+      if (o.date) {
         return o
       }
     })
@@ -122,32 +128,42 @@ request(App.DataNew , function(err,  data) {
      * canotons: abbreviation_canton_and_fl:
      * cases: ncumul_conf
      * deaths: ncumul_deceased
-     *  */    
+     *  */
     return
     //
     var response = await got(App.DataSrcURL);
-    var swissData = Papa.parse(response.body,{header:true})
+    var swissData = Papa.parse(response.body, {
+      header: true
+    })
     var recentData = getRecent(swissData)
     console.log('Cases: Reading Success');
-    console.dir(recentData, {depth: null, colors: true})
+    console.dir(recentData, {
+      depth: null,
+      colors: true
+    })
     await updateData(recentData)
     var response = await got(App.DataSrcFataURL);
-    var swissFata = Papa.parse(response.body,{header:true})    
+    var swissFata = Papa.parse(response.body, {
+      header: true
+    })
     var recentFata = getRecent(swissFata)
     console.log('Fatalities: Reading Success');
-    console.dir(recentFata, {depth: null, colors: true})
+    console.dir(recentFata, {
+      depth: null,
+      colors: true
+    })
     await updateData(recentFata, "fata")
     await generatePng()
-  if (App.isProduction) {
-    console.log('Publishing: mode')
-    createTweet()          
-  }
+    if (App.isProduction) {
+      console.log('Publishing: mode')
+      createTweet()
+    }
   } catch (error) {
     console.log('Building map Error', error);
   }
 })();
 /** Get the most recent updates */
-function getRecent(data){
+function getRecent(data) {
   console.log(data)
   var json = _.filter(data.data, function (o) {
     if (o.CH) {
@@ -163,7 +179,7 @@ function getRecent(data){
  * 
  * Write Data to files 
  */
-function writeFile(data){
+function writeFile(data) {
   fs.writeFile('./swiss.json', JSON.stringify(App.data), 'utf8', function (err) {
     if (err) {
       return console.log(err);
@@ -175,46 +191,46 @@ function writeFile(data){
 /** 
  * Update New Data
  *  */
-function updateDataNew(latest){
+function updateDataNew(latest) {
   console.log('Data', latest[0])
-  if(App.dataUpdated == 0){
+  if (App.dataUpdated == 0) {
     var buffer = fs.readFileSync("swiss.src.json");
     var data = JSON.parse(buffer)
     App.data = data;
   }
   var cantons = App.data.objects.cantons.geometries
   var cantonsUpdate = _.map(cantons, (element) => {
-    var canton = _.find(latest,(o)=>{
+    var canton = _.find(latest, (o) => {
       return o.abbreviation_canton_and_fl == element.id
     })
     console.log('canton', canton)
-    if(!canton){
+    if (!canton) {
       console.log('Canton Does not exist', element.id)
 
       var props = {
         properties: {
           id: element.id,
           name: element.properties.name,
-          cases:  0,
-          fata:  0
+          cases: 0,
+          fata: 0
         }
       }
       // return
-    }else{
+    } else {
       console.log('Canton   exists', element.id)
 
       var props = {
         properties: {
           id: element.id,
           name: element.properties.name,
-          cases: canton.ncumul_conf ,
+          cases: canton.ncumul_conf,
           fata: canton.ncumul_deceased
         }
       }
     }
 
 
-    return _.extend({}, element, props );
+    return _.extend({}, element, props);
   })
 
 
@@ -225,8 +241,8 @@ function updateDataNew(latest){
 
 }
 /** Update the Data file */
-function updateData(latest,type) {
-  if(App.dataUpdated == 0){
+function updateData(latest, type) {
+  if (App.dataUpdated == 0) {
     var buffer = fs.readFileSync("swiss.src.json");
     var data = JSON.parse(buffer)
     App.data = data;
@@ -234,10 +250,10 @@ function updateData(latest,type) {
   console.log('Reading Cantons: ', App.data.objects.cantons.geometries.length)
   var cantons = App.data.objects.cantons.geometries
   App.data.day = latest.day
-  if(type == 'fata'){
+  if (type == 'fata') {
     console.log('Total Fatailities Updated :', latest.CH)
     App.data.fataTotal = latest.CH
-  }else{
+  } else {
     console.log('Total Cases Updated :', latest.CH)
     App.data.total = latest.CH
   }
@@ -248,17 +264,17 @@ function updateData(latest,type) {
         name: element.properties.name,
       }
     }
-    if(type == 'fata'){
+    if (type == 'fata') {
       props.properties.fata = latest[element.id] || 0
       props.properties.cases = element.properties.cases;
-      console.log('\x1b[36m', props.properties.name ,'\x1b[0m');
+      console.log('\x1b[36m', props.properties.name, '\x1b[0m');
       console.log('=')
       console.log(props.properties)
       console.log('-----------------------------')
-    }else{
+    } else {
       props.properties.cases = latest[element.id] || 0;
     }
-    return _.extend({}, element, props );
+    return _.extend({}, element, props);
   })
   App.data.objects.cantons.geometries = cantonsUpdate
   console.log("Success", "Cantons data updated")
@@ -327,7 +343,7 @@ function createTweet() {
           console.log("Success", "The Tweet has been posted to Twitter", post.id_str);
           console.log("Tweet", "https://twitter.com/" + post.user.screen_name + '/status/' + post.id_str)
         }
-        exit()  
+        exit()
       });
     } else {
       console.log("Twitter upload error", error)
@@ -340,13 +356,15 @@ function exit() {
   process.exit(-1)
 }
 /** */
-function csvParse(data){
-  if(!data){
-    throw Error('No-data',"csvParse: Please submit the data")
-    return 
+function csvParse(data) {
+  if (!data) {
+    throw Error('No-data', "csvParse: Please submit the data")
+    return
   }
   var data = JSON.parse(data)
-  var json = Papa.parse(data,{header:true})
+  var json = Papa.parse(data, {
+    header: true
+  })
   return json
 }
 /** */
