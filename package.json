@@ -26,6 +26,7 @@
     "papaparse": "^5.1.1",
     "puppeteer": "^2.1.1",
     "topojson": "^3.0.2",
-    "twitter": "^1.7.1"
+    "twitter": "^1.7.1",
+    "xlsx": "^0.15.6"
   }
 }

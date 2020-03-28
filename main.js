@@ -15,6 +15,16 @@ const util = require('util')
 const Twitter = require('twitter');
 const Papa = require('papaparse')
 const got = require('got');
+// var xlsFile = 'https://www.bag.admin.ch/dam/bag/de/dokumente/mt/k-und-i/aktuelle-ausbrueche-pandemien/2019-nCoV/covid-19-datengrundlage-lagebericht.xlsx.download.xlsx/200325_Datengrundlage_Grafiken_COVID-19-Bericht.xlsx'
+// // request(xlsFile).pipe(fs.createWriteStream('data.xlsx'))
+// var XLSX = require('xlsx')
+// request(xlsFile, {encoding: null}, function(err, res, data) {
+// 	if(err || res.statusCode !== 200) return;
+// 	/* data is a node Buffer that can be passed to XLSX.read */
+//   var workbook = XLSX.read(data, {type:'buffer'});
+//   console.log(workbook)
+// 	/* DO SOMETHING WITH workbook HERE */
+// });
 /** App Configs */
 App = {}
 /**  */
@@ -25,6 +35,7 @@ App.URL = 'http://localhost:' + App.PORT;
 App.post = "";
 App.DataSrcURL = "https://raw.githubusercontent.com/daenuprobst/covid19-cases-switzerland/master/covid19_cases_switzerland.csv"
 App.DataSrcFataURL = "https://raw.githubusercontent.com/daenuprobst/covid19-cases-switzerland/master/covid19_fatalities_switzerland.csv"
+App.DataNew = "https://www.functor.xyz/covid_19/scrapers/outputs/latest.csv"
 App.DataSrcJSON = null;
 App.day = "";
 App.dataUpdated = 0;
@@ -61,10 +72,38 @@ if (App.isProduction) {
 } else {
   console.log('Development Mode')
 }
+// request(App.newData , function(err, res, data) {
+// 	if(err || res.statusCode !== 200) return;
+// 	/* data is a node Buffer that can be passed to XLSX.read */
+//   console.log(JSON.parse(data))
+// 	/* DO SOMETHING WITH workbook HERE */
+// });
 /** Reading Source file*/
 /** */
 (async () => {
   try {
+    var newData = await got(App.DataNew)
+    // console.log(newData.body)
+    var data = Papa.parse(newData.body,{header:true}).data 
+    var data = _.filter(data,(o)=>{
+      if(o.date){
+        return o
+      }
+    })
+    console.log('==========Data===========')
+    // console.log(data)
+    // console.log('F',f)
+    // return
+    await updateDataNew(data)
+    await generatePng()
+    console.log("Example app listening at", App.URL)
+    /**
+     * canotons: abbreviation_canton_and_fl:
+     * cases: ncumul_conf
+     * deaths: ncumul_deceased
+     *  */    
+    return
+    //
     var response = await got(App.DataSrcURL);
     var swissData = Papa.parse(response.body,{header:true})
     var recentData = getRecent(swissData)
@@ -88,6 +127,7 @@ if (App.isProduction) {
 })();
 /** Get the most recent updates */
 function getRecent(data){
+  console.log(data)
   var json = _.filter(data.data, function (o) {
     if (o.CH) {
       return o
@@ -97,6 +137,71 @@ function getRecent(data){
   var latest = json[json.length - 1];
   latest.day = latest[Object.keys(latest)[0]]
   return latest
+}
+/**
+ * 
+ * Write Data to files 
+ */
+function writeFile(data){
+  fs.writeFile('./swiss.json', JSON.stringify(App.data), 'utf8', function (err) {
+    if (err) {
+      return console.log(err);
+    } else {
+      console.log("Writing Mew Data Success")
+    }
+  });
+}
+/** 
+ * Update New Data
+ *  */
+function updateDataNew(latest){
+  console.log('Data', latest[0])
+  if(App.dataUpdated == 0){
+    var buffer = fs.readFileSync("swiss.src.json");
+    var data = JSON.parse(buffer)
+    App.data = data;
+  }
+  var cantons = App.data.objects.cantons.geometries
+  var cantonsUpdate = _.map(cantons, (element) => {
+    var canton = _.find(latest,(o)=>{
+      return o.abbreviation_canton_and_fl == element.id
+    })
+    console.log('canton', canton)
+    if(!canton){
+      console.log('Canton Does not exist', element.id)
+
+      var props = {
+        properties: {
+          id: element.id,
+          name: element.properties.name,
+          cases:  0,
+          fata:  0
+        }
+      }
+      // return
+    }else{
+      console.log('Canton   exists', element.id)
+
+      var props = {
+        properties: {
+          id: element.id,
+          name: element.properties.name,
+          cases: canton.ncumul_conf ,
+          fata: canton.ncumul_deceased
+        }
+      }
+    }
+
+
+    return _.extend({}, element, props );
+  })
+
+
+  App.data.objects.cantons.geometries = cantonsUpdate
+
+  writeFile(App.data)
+
+
 }
 /** Update the Data file */
 function updateData(latest,type) {
@@ -170,12 +275,16 @@ function generatePng() {
 }
 /** Csv to JSON */
 function csvToJson(csv) {
+  // console.log('csv',csv)
   const content = csv.split('\n');
+  // console.log('content',content)
   const header = content[0].split(',');
+  // console.log('header',header)
   var c = _.tail(content).map((row) => {
     return _.zipObject(header, row.split(','));
     console.log(c)
   });
+  return c
 }
 /**Create Tweet and Publish to Twitter */
 function createTweet() {
