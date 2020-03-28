@@ -73,46 +73,48 @@ if (App.isProduction) {
   console.log('Development Mode')
 }
 /** */
-request(App.DataNew, function (err, data) {
-  if (err) {
-    console.log('Request Error', err)
-  };
-
-  if (data && data.body) {
-    /* data is a node Buffer that can be passed to XLSX.read */
-    console.log(data)
-    // var data = Papa.parse(data.body,{header:true}).data 
-    var data = csvToJson(data.body)
-
-    var data = _.filter(data, (o) => {
-      if (o.date) {
-        return o
-      }
-    })
-    console.log('==========Data===========')
-
-
-    console.log(data)
-
-    updateDataNew(data)
-    generatePng()
-  }
 
 
 
-  /* DO SOMETHING WITH workbook HERE */
-});
+
+
+// request(App.DataNew, function (err, data) {
+//   if (err) {
+//     console.log('Request Error', err)
+//   };
+
+//   if (data && data.body) {
+//     console.log(data)
+//     // var data = Papa.parse(data.body,{header:true}).data 
+//     var data = csvToJson(data.body)
+
+//     var data = _.filter(data, (o) => {
+//       if (o.date) {
+//         return o
+//       }
+//     })
+//     console.log('==========Data===========')
+
+
+//     console.log(data)
+
+//     updateDataNew(data)
+//     generatePng()
+//   }
+// });
+
+
+
 /** Reading Source file*/
 /** */
 (async () => {
   try {
-    return
+ 
     var newData = await got(App.DataNew)
-    // console.log(newData.body)
     var data = Papa.parse(newData.body, {
       header: true
-    }).data
-    var data = _.filter(data, (o) => {
+    })
+    var data = _.filter(data.data, (o) => {
       if (o.date) {
         return o
       }
