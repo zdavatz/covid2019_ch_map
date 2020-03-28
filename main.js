@@ -72,16 +72,32 @@ if (App.isProduction) {
 } else {
   console.log('Development Mode')
 }
-// request(App.newData , function(err, res, data) {
-// 	if(err || res.statusCode !== 200) return;
-// 	/* data is a node Buffer that can be passed to XLSX.read */
-//   console.log(JSON.parse(data))
-// 	/* DO SOMETHING WITH workbook HERE */
-// });
+request(App.DataNew , function(err, res, data) {
+	if(err || res.statusCode !== 200) return;
+  /* data is a node Buffer that can be passed to XLSX.read */
+  var data = Papa.parse(data,{header:true}).data 
+
+  var data = _.filter(data,(o)=>{
+    if(o.date){
+      return o
+    }
+  })
+  console.log('==========Data===========')
+
+
+  console.log(data)
+
+   updateDataNew(data)
+   generatePng()
+
+  
+	/* DO SOMETHING WITH workbook HERE */
+});
 /** Reading Source file*/
 /** */
 (async () => {
   try {
+    return
     var newData = await got(App.DataNew)
     // console.log(newData.body)
     var data = Papa.parse(newData.body,{header:true}).data 
