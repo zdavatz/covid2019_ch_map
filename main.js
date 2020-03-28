@@ -298,7 +298,7 @@ function createTweet() {
       console.log(media);
       console.log("Success: Image file uploaded");
       var status = {
-        status: 'Look at your CT Scan images with Miele-LXIV, free and OpenSource https://apps.apple.com/de/app/miele-lxiv/id988332475?mt=12 #Covid19 #DICOM https://www.bag.admin.ch/bag/de/home/krankheiten/infektionskrankheiten-bekaempfen/meldesysteme-infektionskrankheiten/meldepflichtige-ik/meldeformulare.html please use this Email covid-19@hin.infreport.ch, Map generated with https://github.com/zdavatz/covid2019_ch_map - data scrapped from Cantons using https://github.com/baryluk/covid_20/',
+        status: 'Schweizer Fachinformationen zu Medikamenten nachschlagen mit #AmiKoDesitin https://www.ywesee.com/AmiKo/Index. Karte generiert mit https://github.com/zdavatz/covid2019_ch_map - Daten sind von hier http://functor.xyz/covid_19/scrapers/outputs/latest.csv',
         media_ids: media.media_id_string
       }
       client.post('statuses/update', status, function (error, post, response) {
