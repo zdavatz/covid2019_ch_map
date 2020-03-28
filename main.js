@@ -73,9 +73,9 @@ if (App.isProduction) {
   console.log('Development Mode')
 }
 /** */
-request(App.DataNew , function(err, res, data) {
-	if(err || res.statusCode !== 200) {
-    console.log('Request Error', res.statusCode, err)
+request(App.DataNew , function(err,  data) {
+	if(err) {
+    console.log('Request Error',  err)
   };
   /* data is a node Buffer that can be passed to XLSX.read */
   var data = Papa.parse(data,{header:true}).data 
