@@ -94,13 +94,16 @@ https.get(App.DataNew, function (response, body) {
         }
       })
       console.log('==========Data===========')
-
-
       console.log(data)
-
       updateDataNew(data)
       generatePng()
-
+      console.log('Map Created')
+      if (App.isProduction) {
+        console.log('Publishing: mode')
+        setTimeout(()=>{
+          createTweet()
+        },1000)                
+      }
     });
   })
 });
