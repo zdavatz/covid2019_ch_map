@@ -78,7 +78,9 @@ request(App.DataNew , function(err,  data) {
     console.log('Request Error',  err)
   };
   /* data is a node Buffer that can be passed to XLSX.read */
-  var data = Papa.parse(data,{header:true}).data 
+  // console.log(data)
+  var data = Papa.parse(data.body,{header:true}).data 
+  // var data = csvToJson(data)
 
   var data = _.filter(data,(o)=>{
     if(o.date){
