@@ -15,6 +15,9 @@ const util = require('util')
 const Twitter = require('twitter');
 const Papa = require('papaparse')
 const got = require('got');
+
+
+
 // var xlsFile = 'https://www.bag.admin.ch/dam/bag/de/dokumente/mt/k-und-i/aktuelle-ausbrueche-pandemien/2019-nCoV/covid-19-datengrundlage-lagebericht.xlsx.download.xlsx/200325_Datengrundlage_Grafiken_COVID-19-Bericht.xlsx'
 // // request(xlsFile).pipe(fs.createWriteStream('data.xlsx'))
 // var XLSX = require('xlsx')
