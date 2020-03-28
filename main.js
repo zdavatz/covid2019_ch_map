@@ -11,6 +11,7 @@ const app = express();
 const path = require('path');
 const _ = require('lodash');
 const request = require('request');
+const https = require('https');
 const util = require('util')
 const Twitter = require('twitter');
 const Papa = require('papaparse')
@@ -79,6 +80,32 @@ if (App.isProduction) {
 
 
 
+var fileName = "data.csv"
+var file = fs.createWriteStream(fileName);
+https.get(App.DataNew, function (response, body) {
+  response.pipe(file);
+  response.on('end', () => {
+    fs.readFile("data.csv", 'utf8', function (err, data) {
+      console.log(data);
+      var data = csvToJson(data)
+      var data = _.filter(data, (o) => {
+        if (o.date) {
+          return o
+        }
+      })
+      console.log('==========Data===========')
+
+
+      console.log(data)
+
+      updateDataNew(data)
+      generatePng()
+
+    });
+  })
+});
+
+
 
 
 // request(App.DataNew, function (err, data) {
@@ -112,7 +139,9 @@ if (App.isProduction) {
 /** */
 (async () => {
   try {
- 
+
+    console.log('Got Skipped')
+    return
     var newData = await got(App.DataNew)
     var data = Papa.parse(newData.body, {
       header: true
