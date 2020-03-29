@@ -372,7 +372,7 @@ function createTweet() {
       console.log(media);
       console.log("Success: Image file uploaded");
       var status = {
-        status: 'Schweizer Fachinformationen zu Medikamenten nachschlagen mit #AmiKoDesitin https://www.ywesee.com/AmiKo/Index. Karte generiert mit https://github.com/zdavatz/covid2019_ch_map - Daten sind von hier http://functor.xyz/covid_19/scrapers/outputs/latest.csv',
+        status: 'Schweizer Fachinformationen zu Medikamenten nachschlagen mit #AmiKoDesitin https://www.ywesee.com/AmiKo/Index. Karte generiert mit https://github.com/zdavatz/covid2019_ch_map - Daten sind von hier http://functor.xyz/covid_19/scrapers/outputs/latest.csv -> http://covid19.ddrobotec.com/ #ddrobotec #ywesee #public #domain #opensource',
         media_ids: media.media_id_string
       }
       client.post('statuses/update', status, function (error, post, response) {
