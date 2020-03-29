@@ -32,7 +32,7 @@ const got = require('got');
 /** App Configs */
 App = {}
 /**  */
-App.isProduction = true;
+App.isProduction = false;
 /** */
 App.PORT = 3033;
 App.URL = 'http://localhost:' + App.PORT;
@@ -235,6 +235,10 @@ function updateDataNew(latest) {
     var data = JSON.parse(buffer)
     App.data = data;
   }
+
+  App.data.total = sumCases(latest,'ncumul_conf')
+  App.data.deaths = sumCases(latest, 'ncumul_deceased')
+  App.data.day = getDate();
   var cantons = App.data.objects.cantons.geometries
   var cantonsUpdate = _.map(cantons, (element) => {
     var canton = _.find(latest, (o) => {
@@ -405,3 +409,25 @@ function csvParse(data) {
   return json
 }
 /** */
+
+function sumCases(collection, field){
+  var total = _.map(collection,(o)=>{
+    var count = parseInt(o[field])
+    return count
+  })
+  var total =  _.without(total, NaN);
+  var total = _.sum(total)
+  return total
+}
+/**
+ * Get Date
+ */
+
+ function getDate(){
+  var currentDate = new Date()
+  var day = currentDate.getDate()
+  var month = currentDate.getMonth() + 1
+  var year = currentDate.getFullYear()
+
+  return day + "-" + month + "-" + year
+ }
