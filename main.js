@@ -16,19 +16,10 @@ const util = require('util')
 const Twitter = require('twitter');
 const Papa = require('papaparse')
 const got = require('got');
-
-
-
-// var xlsFile = 'https://www.bag.admin.ch/dam/bag/de/dokumente/mt/k-und-i/aktuelle-ausbrueche-pandemien/2019-nCoV/covid-19-datengrundlage-lagebericht.xlsx.download.xlsx/200325_Datengrundlage_Grafiken_COVID-19-Bericht.xlsx'
-// // request(xlsFile).pipe(fs.createWriteStream('data.xlsx'))
-// var XLSX = require('xlsx')
-// request(xlsFile, {encoding: null}, function(err, res, data) {
-// 	if(err || res.statusCode !== 200) return;
-// 	/* data is a node Buffer that can be passed to XLSX.read */
-//   var workbook = XLSX.read(data, {type:'buffer'});
-//   console.log(workbook)
-// 	/* DO SOMETHING WITH workbook HERE */
-// });
+const XLSX = require('xlsx')
+const colors = require('colors')
+var jsonData;
+require('dotenv').config();
 /** App Configs */
 App = {}
 /**  */
@@ -40,11 +31,11 @@ App.post = "";
 App.DataSrcURL = "https://raw.githubusercontent.com/daenuprobst/covid19-cases-switzerland/master/covid19_cases_switzerland.csv"
 App.DataSrcFataURL = "https://raw.githubusercontent.com/daenuprobst/covid19-cases-switzerland/master/covid19_fatalities_switzerland.csv"
 App.DataNew = "https://www.functor.xyz/covid_19/scrapers/outputs/latest.csv"
+App.xlsFile = 'https://www.bag.admin.ch/dam/bag/de/dokumente/mt/k-und-i/aktuelle-ausbrueche-pandemien/2019-nCoV/covid-19-datengrundlage-lagebericht.xlsx.download.xlsx/200325_Datengrundlage_Grafiken_COVID-19-Bericht.xlsx'
 App.DataSrcJSON = null;
 App.day = "";
 App.dataUpdated = 0;
-var jsonData;
-require('dotenv').config();
+//
 /** */
 if (!process.env.TWITTER_CONSUMER_KEY || !process.env.TWITTER_CONSUMER_SECRET || !process.env.TWITTER_CONSUMER_TOKEN_KEY || !process.env.TWITTER_CONSUMER_TOKEN_SECRET) {
   console.log("ERROR: Twitter keys and tokens are not set")
@@ -76,73 +67,94 @@ if (App.isProduction) {
 } else {
   console.log('Development Mode')
 }
-/** */
-
-
-
-var fileName = "data.csv"
-var file = fs.createWriteStream(fileName);
-https.get(App.DataNew, function (response, body) {
-  response.pipe(file);
-  response.on('end', () => {
-    fs.readFile("data.csv", 'utf8', function (err, data) {
-      console.log(data);
-      var data = csvToJson(data)
-      var data = _.filter(data, (o) => {
-        if (o.date) {
-          return o
-        }
-      })
-      console.log('==========Data===========')
-      console.log(data)
-      updateDataNew(data)
-      generatePng()
-      console.log('Map Created')
-      if (App.isProduction) {
-        console.log('Publishing: mode')
-        setTimeout(()=>{
-          createTweet()
-        },1000)                
-      }
+/**
+ * 
+ * Using Xlsx File
+ */
+function runXlxs() {
+  // Used to write the file locally
+  // request(App.xlsFile).pipe(fs.createWriteStream('data.xlsx'))
+  request(App.xlsFile, {
+    encoding: null
+  }, function (err, res, data) {
+    console.log('Checking remove exel file')
+    console.log('Checking: ', App.xlsFile)
+    if (err || res.statusCode !== 200) {
+      throw new Error('XLSX file does not exist')
+    };
+    /* data is a node Buffer that can be passed to XLSX.read */
+    var workbook = XLSX.read(data, {
+      type: 'buffer'
     });
-  })
-});
+    var cantons = workbook.Sheets["COVID19 Kantone"]
+    var sheet = XLSX.utils.sheet_to_json(cantons, {
+      raw: true,
+      header: ["canton", "cases"]
+    })
+    console.log('Sheet data [COVID19 Kantone]:')
+    console.log(sheet)
+    console.log('Cleaning data for the sheet')
+    var xlxsData = _.map(sheet, (key, val) => {
+      if (key.canton.length === 2) {
+        // console.log('key',key.canton)
+        return {
+          canton: key.canton,
+          cases: key.cases
+        }
+      }
+    })
+    var xlxsData = _.compact(xlxsData)
+    console.log(xlxsData)
+    updateDataXlsx(xlxsData)
+    generatePng()
+    publishTweet()
+    /* DO SOMETHING WITH workbook HERE */
+  });
+}
+runXlxs()
+/**
+ * Run  Updates for The New CSV
+ */
+function runUpdates() {
+  var fileName = "data.csv"
+  var file = fs.createWriteStream(fileName);
+  https.get(App.DataNew, function (response, body) {
+    response.pipe(file);
+    response.on('end', () => {
+      fs.readFile("data.csv", 'utf8', function (err, data) {
+        console.log(data);
+        var data = csvToJson(data)
+        var data = _.filter(data, (o) => {
+          if (o.date) {
+            return o
+          }
+        })
+        console.log('==========Data===========')
+        console.log(data)
+        updateDataNew(data)
+        generatePng()
+        console.log('Map Created')
+        publishTweet()
+      });
+    })
+  });
+}
 
 
-
-
-// request(App.DataNew, function (err, data) {
-//   if (err) {
-//     console.log('Request Error', err)
-//   };
-
-//   if (data && data.body) {
-//     console.log(data)
-//     // var data = Papa.parse(data.body,{header:true}).data 
-//     var data = csvToJson(data.body)
-
-//     var data = _.filter(data, (o) => {
-//       if (o.date) {
-//         return o
-//       }
-//     })
-//     console.log('==========Data===========')
-
-
-//     console.log(data)
-
-//     updateDataNew(data)
-//     generatePng()
-//   }
-// });
-
-
-
+function publishTweet() {
+  if (App.isProduction) {
+    console.log('Publishing: mode')
+    setTimeout(() => {
+      createTweet()
+    }, 1000)
+  } else {
+    console.log('Is Development mode... Debugging')
+  }
+}
 /** Reading Source file*/
 /** */
 (async () => {
   try {
-
     console.log('Got Skipped')
     return
     var newData = await got(App.DataNew)
@@ -225,6 +237,49 @@ function writeFile(data) {
     }
   });
 }
+/**
+ * 
+ * Update Data from xls file 
+ */
+function updateDataXlsx(latest) {
+  console.log('Reading Data for XLSX file')
+  var buffer = fs.readFileSync("swiss.src.json");
+  var data = JSON.parse(buffer)
+  App.data = data;
+  // Setting the Data 
+  App.data.total = sumCases(latest, 'cases')
+  App.data.day = getDate();
+  var cantons = App.data.objects.cantons.geometries;
+  var cantonsUpdate = _.map(cantons, (element) => {
+    var canton = _.find(latest, (o) => {
+      return o.canton == element.id
+    })
+    console.log('canton', canton)
+    if (!canton) {
+      console.log('Canton Does not exist', element.id)
+      var props = {
+        properties: {
+          id: element.id,
+          name: element.properties.name,
+          cases: 0
+        }
+      }
+      // return
+    } else {
+      console.log('Canton   exists', element.id)
+      var props = {
+        properties: {
+          id: element.id,
+          name: element.properties.name,
+          cases: canton.cases
+        }
+      }
+    }
+    return _.extend({}, element, props);
+  })
+  App.data.objects.cantons.geometries = cantonsUpdate
+  writeFile(App.data)
+}
 /** 
  * Update New Data
  *  */
@@ -235,8 +290,7 @@ function updateDataNew(latest) {
     var data = JSON.parse(buffer)
     App.data = data;
   }
-
-  App.data.total = sumCases(latest,'ncumul_conf')
+  App.data.total = sumCases(latest, 'ncumul_conf')
   App.data.deaths = sumCases(latest, 'ncumul_deceased')
   App.data.day = getDate();
   var cantons = App.data.objects.cantons.geometries
@@ -247,7 +301,6 @@ function updateDataNew(latest) {
     console.log('canton', canton)
     if (!canton) {
       console.log('Canton Does not exist', element.id)
-
       var props = {
         properties: {
           id: element.id,
@@ -259,7 +312,6 @@ function updateDataNew(latest) {
       // return
     } else {
       console.log('Canton   exists', element.id)
-
       var props = {
         properties: {
           id: element.id,
@@ -269,17 +321,10 @@ function updateDataNew(latest) {
         }
       }
     }
-
-
     return _.extend({}, element, props);
   })
-
-
   App.data.objects.cantons.geometries = cantonsUpdate
-
   writeFile(App.data)
-
-
 }
 /** Update the Data file */
 function updateData(latest, type) {
@@ -349,6 +394,7 @@ function generatePng() {
     });
     console.log('Screenshot is ready at "swiss.png"')
     await browser.close();
+    console.log("Example app listening at", App.URL)
   })();
 }
 /** Csv to JSON */
@@ -409,25 +455,30 @@ function csvParse(data) {
   return json
 }
 /** */
-
-function sumCases(collection, field){
-  var total = _.map(collection,(o)=>{
+function sumCases(collection, field) {
+  var total = _.map(collection, (o) => {
     var count = parseInt(o[field])
     return count
   })
-  var total =  _.without(total, NaN);
+  var total = _.without(total, NaN);
   var total = _.sum(total)
   return total
 }
 /**
  * Get Date
  */
-
- function getDate(){
+function getDate() {
   var currentDate = new Date()
   var day = currentDate.getDate()
   var month = currentDate.getMonth() + 1
   var year = currentDate.getFullYear()
-
   return day + "-" + month + "-" + year
- }
+}
+/** */
+function log(obj) {
+  _.each(obj, (val, key) => {
+    console.log({
+      key: val
+    });
+  });
+}

@@ -56,7 +56,12 @@
             if (error) throw error;
             d3.select("#date").text(swiss.day)
             d3.select("#total").text(swiss.total)
-            d3.select("#deaths").text(swiss.deaths)
+            if(swiss.deaths){
+                d3.select("#deaths").text(swiss.deaths)
+            }else{
+                d3.select("#deaths").attr("opacity", 0)
+            }
+           
             console.log(swiss)
             var cantons = topojson.feature(swiss, swiss.objects.cantons);
             //
@@ -90,9 +95,11 @@
                 })
                 .attr("dy", ".45em")
                 .html(function (d) {
-                    if (d.properties.cases) {
+                    if (d.properties.cases && d.properties.fata) {
                         return d.id + " <br/> " + d.properties.cases + " / " + d.properties.fata;
-                    } else {
+                    } else if(d.properties.cases && !d.properties.fata){
+                        return d.id + " <br/> " + d.properties.cases 
+                    }else{
                         return d.id;
                     }
                 });
