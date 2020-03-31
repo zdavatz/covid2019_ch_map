@@ -55,9 +55,9 @@
         d3.json("swiss.json", function (error, swiss) {
             if (error) throw error;
             d3.select("#date").text(swiss.day)
-            d3.select("#total").text("<strong>Total:</strong> "+ swiss.total)
+            d3.select("#total").html("<strong>Total:</strong> "+ swiss.total)
             if(swiss.deaths){
-                d3.select("#deaths").text(" <strong>Deaths:</strong>Deaths: " + swiss.deaths)
+                d3.select("#deaths").html(" <strong>Deaths:</strong>Deaths: " + swiss.deaths)
             }else{
                 d3.select("#deaths").attr("opacity", 0)
             }
