@@ -34,8 +34,8 @@
     <div id="map"></div>
     <div class="" style="text-align: center;width: 50%;width: 960px;height: 80px; padding: 10px;">
       <span class="meta"><strong>Date:</strong> <span id="date"></span></span><br>
-        <span class="meta"><strong>Total Cases:</strong> <span id="total"></span></span> 
-        <span class="meta"><strong> Deaths:</strong> <span id="deaths"></span></span><br>
+        <span class="meta"> <span id="total"></span></span> 
+        <span class="meta"><strong></strong> <span id="deaths"></span></span><br>
         <span class="meta"><strong>Look at your Covid19 CT Scan images with Miele-LXIV<br>free and OpenSource<br>https://apps.apple.com/de/app/miele-lxiv/id988332475?mt=12</strong> <span id="total"></span></span><br><br>https://github.com/zdavatz/covid2019_ch_map
     </div>
     <script>
@@ -55,9 +55,9 @@
         d3.json("swiss.json", function (error, swiss) {
             if (error) throw error;
             d3.select("#date").text(swiss.day)
-            d3.select("#total").text(swiss.total)
+            d3.select("#total").text("<strong>Total:</strong> "+ swiss.total)
             if(swiss.deaths){
-                d3.select("#deaths").text(swiss.deaths)
+                d3.select("#deaths").text(" <strong>Deaths:</strong>Deaths: " + swiss.deaths)
             }else{
                 d3.select("#deaths").attr("opacity", 0)
             }
