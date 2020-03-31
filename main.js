@@ -23,7 +23,7 @@ require('dotenv').config();
 /** App Configs */
 App = {}
 /**  */
-App.isProduction = false;
+App.isProduction = true;
 /** */
 App.PORT = 3033;
 App.URL = 'http://localhost:' + App.PORT;
