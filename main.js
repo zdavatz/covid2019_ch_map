@@ -23,7 +23,7 @@ require('dotenv').config();
 /** App Configs */
 App = {}
 /**  */
-App.isProduction = false;
+App.isProduction = true;
 /** */
 App.PORT = 3033;
 App.URL = 'http://localhost:' + App.PORT;
@@ -32,6 +32,9 @@ App.DataSrcURL = "https://raw.githubusercontent.com/daenuprobst/covid19-cases-sw
 App.DataSrcFataURL = "https://raw.githubusercontent.com/daenuprobst/covid19-cases-switzerland/master/covid19_fatalities_switzerland.csv"
 App.DataNew = "https://www.functor.xyz/covid_19/scrapers/outputs/latest.csv"
 App.xlsFile = 'https://www.bag.admin.ch/dam/bag/de/dokumente/mt/k-und-i/aktuelle-ausbrueche-pandemien/2019-nCoV/covid-19-datengrundlage-lagebericht.xlsx.download.xlsx/200325_Datengrundlage_Grafiken_COVID-19-Bericht.xlsx'
+App.xlsFile2 = 'https://www.bag.admin.ch/dam/bag/de/dokumente/mt/k-und-i/aktuelle-ausbrueche-pandemien/2019-nCoV/covid-19-datengrundlage-lagebericht.xlsx.download.xlsx/200325_Datengrundlage_Grafiken_COVID-19-Bericht.xlsx'
+
+
 App.DataSrcJSON = null;
 App.day = "";
 App.dataUpdated = 0;
@@ -146,7 +149,7 @@ function publishTweet() {
     console.log('Publishing: mode')
     setTimeout(() => {
       createTweet()
-    }, 1000)
+    }, 2000)
   } else {
     console.log('Is Development mode... Debugging')
   }
@@ -414,6 +417,9 @@ function csvToJson(csv) {
 function createTweet() {
   var image = require('fs').readFileSync('swiss.png');
   console.log("Reading Image", image)
+  if(!image){
+    throw Error('createTweetErr', "Image is not loaded")
+  }
   client.post('media/upload', {
     media: image
   }, function (error, media, response) {
