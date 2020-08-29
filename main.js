@@ -40,15 +40,15 @@ App.day = "";
 App.dataUpdated = 0;
 //
 /** */
-// if (!process.env.TWITTER_CONSUMER_KEY || !process.env.TWITTER_CONSUMER_SECRET || !process.env.TWITTER_CONSUMER_TOKEN_KEY || !process.env.TWITTER_CONSUMER_TOKEN_SECRET) {
-//   console.log("ERROR: Twitter keys and tokens are not set")
-//   return
-// } else {
-//   console.log("Key: ", process.env.TWITTER_CONSUMER_KEY)
-//   console.log("KeySecret: ", process.env.TWITTER_CONSUMER_SECRET)
-//   console.log("Token: ", process.env.TWITTER_CONSUMER_TOKEN_KEY)
-//   console.log("TokenSecret: ", process.env.TWITTER_CONSUMER_TOKEN_SECRET)
-// }
+if (!process.env.TWITTER_CONSUMER_KEY || !process.env.TWITTER_CONSUMER_SECRET || !process.env.TWITTER_CONSUMER_TOKEN_KEY || !process.env.TWITTER_CONSUMER_TOKEN_SECRET) {
+  console.log("ERROR: Twitter keys and tokens are not set")
+  return
+} else {
+  console.log("Key: ", process.env.TWITTER_CONSUMER_KEY)
+  console.log("KeySecret: ", process.env.TWITTER_CONSUMER_SECRET)
+  console.log("Token: ", process.env.TWITTER_CONSUMER_TOKEN_KEY)
+  console.log("TokenSecret: ", process.env.TWITTER_CONSUMER_TOKEN_SECRET)
+}
 /** */
 var client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
