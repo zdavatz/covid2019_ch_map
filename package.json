@@ -23,7 +23,7 @@
     "express": "^4.17.1",
     "got": "^10.6.0",
     "lodash": "^4.17.19",
-    "papaparse": "^5.1.1",
+    "papaparse": "^5.2.0",
     "puppeteer": "^2.1.1",
     "topojson": "^3.0.2",
     "twitter": "^1.7.1",
