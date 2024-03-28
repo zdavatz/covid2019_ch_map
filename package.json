@@ -20,7 +20,7 @@
   "dependencies": {
     "colors": "^1.4.0",
     "dotenv": "^8.2.0",
-    "express": "^4.17.3",
+    "express": "^4.19.2",
     "got": "^12.5.3",
     "lodash": "^4.17.21",
     "papaparse": "^5.2.0",
